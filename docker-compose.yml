@@ -1,0 +1,42 @@
+version: '2'
+services:
+  influxdb:
+    image: docker.io/bitnami/influxdb:2
+    ports:
+      - '8086:8086'
+    volumes:
+      - influxdb-storage:/var/lib/influxdb
+    environment:
+      - INFLUXDB_ADMIN_USER_PASSWORD=admin_password
+      - INFLUXDB_USER=my_user
+      - INFLUXDB_USER_PASSWORD=my_password
+      - INFLUXDB_DB=my_database
+      - INFLUXDB_ADMIN_USER_TOKEN=admin_token
+#  chronograf:
+#    image: chronograf:latest
+#    ports:
+#      - '127.0.0.1:8888:8888'
+#    volumes:
+#      - chronograf-storage:/var/lib/chronograf
+#    depends_on:
+#      - influxdb
+#    environment:
+#      - INFLUXDB_URL=http://influxdb:8086
+#      - INFLUXDB_USERNAME=${INFLUXDB_USERNAME}
+#      - INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD}
+  grafana:
+    image: grafana/grafana:8.2.1
+    ports:
+      - '3000:3000'
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana-provisioning/:/etc/grafana/provisioning
+    depends_on:
+      - influxdb
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+volumes:
+  influxdb-storage:
+  chronograf-storage:
+  grafana-storage:
